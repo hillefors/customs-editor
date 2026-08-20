@@ -8,5 +8,6 @@ export default defineConfig({
     // Honor a PORT assigned by the environment (e.g. the preview harness);
     // fall back to Vite's default otherwise.
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
+    base: '/customs-editor/'
   },
 })
