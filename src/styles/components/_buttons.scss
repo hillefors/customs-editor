@@ -1,0 +1,122 @@
+/* components/_buttons.scss */ 
+
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:color';
+@use '../settings' as s;
+@use '../settings/derived' as d;
+@use '../settings/functions' as f;
+
+@mixin button-variant($name, $bg-color, $mix) {
+  $text-color: f.yiq-contrast-color($bg-color);
+
+  &--#{$name} {
+    color: $text-color;
+    background-color: $bg-color;
+    border-color: transparent;
+
+    &:hover {
+      $hover-color: color.mix($mix, $bg-color, 20%);
+      background-color: $hover-color;
+      color: f.yiq-contrast-color($hover-color);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px color.mix(white, $bg-color, 60%);
+    }
+
+    &.btn--outline {
+      background-color: transparent;
+      border-color: $bg-color;
+      color: $bg-color;
+
+      &:hover {
+        $hover-color: color.mix($mix, $bg-color, 12%);
+        background-color: $hover-color;
+        color: f.yiq-contrast-color($hover-color);
+      }
+    }
+
+    // Subtle 135deg gradient: base -> slightly brighter base.
+    // background-image paints over the flat background-color of the variant.
+    &.btn--gradient {
+      $grad-top: color.scale($bg-color, $lightness: +18%);
+      background-image: linear-gradient(135deg, $grad-top, $bg-color);
+      border-color: transparent;
+      // Extend the gradient under the (transparent) 1px border so the border
+      // ring doesn't reveal the flat background-color as a mismatched line.
+      // The transparent border stays only to match outline buttons' box size.
+      background-origin: border-box;
+
+      &:hover {
+        $grad-top-hover: color.scale($bg-color, $lightness: +28%);
+        background-image: linear-gradient(135deg, $grad-top-hover, $bg-color);
+      }
+    }
+  }
+}
+
+@mixin generate-buttons($only: null, $mix: black) {
+  @each $name, $color in d.$colors {
+    @if $only == null or list.index($only, $name) {
+      @include button-variant($name, $color, $mix);
+    }
+  }
+}
+
+.btn {
+  background-color: var(--color-surface);
+  color: var(--color-body-text);
+
+  padding: calc(var(--space-1) * 1.5) calc(var(--space-2) * 1.75);
+
+  line-height: 1.2;
+  font-weight: 400;
+  text-decoration: none;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--button-border-radius);
+
+  cursor: pointer;
+  transition: background-color var(--transition-time-base) var(--transition-function-base), 
+    color var(--transition-time-base) var(--transition-function-base), 
+    border-color var(--transition-time-base) var(--transition-function-base);
+
+  &:hover:not([class~="btn--primary"]):not([class~="btn--secondary"]):not([class~="btn--accent"]):not([class~="btn--highlight"]):not([class~="btn--quiet"]):not([class~="btn--link"]) {
+    background-color: var(--color-off-white);
+    border-color: var(--color-border-hover);
+    color: var(--color-body-text);
+  }
+
+  &--big {
+    padding: calc(var(--space-3) - 1px) var(--space-3);
+  }
+
+  // @include generate-buttons(); // will add buttons for all $colors
+  
+  @include generate-buttons($only: ('primary'), $mix: black);
+  @include generate-buttons($only: ('secondary'), $mix: black);
+  @include generate-buttons($only: ('accent'), $mix: white);
+  @include generate-buttons($only: ('highlight'), $mix: white);
+  @include generate-buttons($only: ('link'), $mix: black);
+
+  &--quiet {
+    background-color: transparent;
+    border-color: transparent;
+    color: inherit;
+
+    &:hover {
+      background-color: var(--color-secondary-surface);
+    }
+
+    &:active {
+      background-color: var(--color-secondary-surface);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px rgba(var(--color-body-text-rgb), 0.25);
+    }
+  }
+}

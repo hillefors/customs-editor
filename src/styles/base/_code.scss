@@ -1,0 +1,33 @@
+/* base/_code.scss */
+
+code {
+  font-family: var(--font-monospace);
+  font-size: 0.95em; // slightly smaller feels nicer inline
+}
+
+:not(pre) > code {
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius-1);
+  background: rgba(var(--color-border-rgb), 0.35);
+  border: 1px solid rgba(var(--color-border-rgb), 0.65);
+}
+
+// pre
+pre {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-1);
+  border: 1px solid rgba(var(--color-border-rgb), 0.65);
+  background: rgba(var(--color-border-rgb), 0.35);
+  overflow: auto;
+  line-height: 1.45;
+  tab-size: 2;
+}
+
+pre code {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0.95em;
+}

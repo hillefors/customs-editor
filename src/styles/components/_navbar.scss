@@ -1,0 +1,223 @@
+/* components/_navbar.scss */
+
+@use '../settings' as s;
+@use '../settings/mixins' as m;
+
+// A minimal, theme-aware navbar.
+//
+// The bar (`.navbar`) spans full width (background, border); its content sits in
+// `.navbar__container`, which mirrors `.container`'s max-widths by default so
+// the navbar lines up with page content instead of hugging the viewport edges.
+// Add `.navbar--fluid` for a full-width content row.
+//
+// Baseline is CSS-only: the drawer is driven by a visually-hidden checkbox
+// (`.navbar__state`) toggled by `<label>` elements. No JavaScript required.
+// Apps that want richer behaviour (close-on-navigate, etc.) can drive the
+// same checkbox from their framework.
+//
+// Expected markup (order matters - the checkbox must precede the elements it
+// controls so the `~` sibling selectors resolve):
+//
+//   <header class="navbar">
+//     <div class="navbar__container">
+//       <input type="checkbox" id="nav" class="navbar__state" aria-hidden="true">
+//       <a class="navbar__brand" href="#">
+//         <BrandGlyph /> <span class="navbar__brand-name">dashcss</span>
+//       </a>
+//       <label for="nav" class="navbar__burger" aria-label="Toggle menu">
+//         <span></span><span></span><span></span>
+//       </label>
+//       <label for="nav" class="navbar__backdrop"></label>
+//       <nav class="navbar__menu">
+//         <a class="navbar__link" href="#">…</a>
+//       </nav>
+//     </div>
+//   </header>
+
+.navbar {
+  --navbar-drawer-width: 16rem;
+  --navbar-z: 1000;
+
+  position: relative;
+  padding-block: var(--space-3);
+  background: var(--color-surface);
+  color: var(--color-body-text);
+
+  // Content row — constrained to the same widths as `.container` (and sharing
+  // its --container-padding-x gutter) so the navbar aligns with page content.
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--container-padding-x, var(--space-3));
+
+    @each $bp, $max in s.$container-max-widths {
+      @include m.respond-to($bp) {
+        max-width: $max;
+      }
+    }
+  }
+
+  // Full-width content row (opt out of the container constraint)
+  &--fluid &__container {
+    max-width: none;
+  }
+
+  // Visually-hidden but focusable state holder
+  &__state {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-right: auto; // push the menu to the far side
+    color: inherit;
+    text-decoration: none;
+    font-weight: var(--font-weight-700, 700);
+
+    &:hover {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  &__brand-name {
+    line-height: 1;
+  }
+
+  // --- Burger (mobile only) ------------------------------------------------
+  &__burger {
+    // Sits above the drawer + backdrop so it doubles as the close (X) control
+    position: relative;
+    z-index: calc(var(--navbar-z) + 1);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.55rem;
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    color: inherit;
+
+    span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      border-radius: 2px;
+      background: currentColor;
+      transition: transform var(--transition-time-base) var(--transition-function-base),
+        opacity var(--transition-time-base) var(--transition-function-base);
+    }
+
+    &:hover {
+      background: var(--color-off-white);
+    }
+  }
+
+  // --- Backdrop (mobile only) ----------------------------------------------
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--navbar-z) - 1);
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-time-base) var(--transition-function-base),
+      visibility var(--transition-time-base) var(--transition-function-base);
+    cursor: pointer;
+  }
+
+  // --- Menu: left drawer on mobile -----------------------------------------
+  &__menu {
+    position: fixed;
+    inset: 0 auto 0 0; // top/right/bottom/left → pin to the left edge
+    z-index: var(--navbar-z);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: min(var(--navbar-drawer-width), 82vw);
+    padding: var(--space-4) var(--space-3);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-3);
+    transform: translateX(-100%);
+    transition: transform var(--transition-time-base) var(--transition-function-base);
+    overflow-y: auto;
+  }
+
+  &__link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-2);
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition-time-base) var(--transition-function-base);
+
+    &--rounded {
+      border-radius: 40rem;
+    }
+
+    // Tasteful hover: a subtle shift toward the brand color, no background.
+    &:hover {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    &.active {
+      background: rgba(var(--color-primary-rgb), 0.28);
+      color: var(--color-primary);
+      font-weight: var(--font-weight-600, 600);
+    }
+  }
+
+  // --- Open state (checkbox checked) ---------------------------------------
+  &__state:checked ~ &__menu {
+    transform: translateX(0);
+  }
+
+  &__state:checked ~ &__backdrop {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  // Burger morphs into a close (X) when open
+  &__state:checked ~ &__burger {
+    span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    span:nth-child(2) { opacity: 0; }
+    span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  }
+
+  // --- Desktop: inline menu, no drawer -------------------------------------
+  @include m.respond-to('md') {
+    &__burger,
+    &__backdrop {
+      display: none;
+    }
+
+    &__menu {
+      position: static;
+      z-index: auto;
+      flex-direction: row;
+      align-items: center;
+      width: auto;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      transform: none;
+      overflow: visible;
+    }
+  }
+}

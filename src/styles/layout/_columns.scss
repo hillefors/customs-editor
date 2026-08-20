@@ -1,0 +1,60 @@
+/* components/_columns.scss */ 
+
+@use "sass:map";
+@use '../settings/mixins' as m;
+
+$sizes: ("20": 20, "25": 25, "33": 33, "40": 40, "50": 50, "60": 60, "66": 66, "75": 75, "80": 80, "100": 100 ) !default;
+
+.columns {
+  display: flex;
+  flex-direction: column;
+  padding-inline-start: calc(var(--column-gap) * -1);
+  padding-inline-end: calc(var(--column-gap) * -1);
+
+  @include m.respond-to('md') {
+    flex-direction: row;
+  }
+
+  .column {
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding-block-start: var(--column-gap);
+    padding-block-end: var(--column-gap);
+
+    @include m.respond-to('md') {
+      padding-block-start: 0;
+      padding-block-end: 0;
+      padding-inline-start: var(--column-gap);
+      padding-inline-end: var(--column-gap);
+    }
+
+    &:first-child {
+      padding-block-start: 0;
+      @include m.respond-to('md') {
+        padding-inline-start: 0;
+      }
+    }
+    
+    &:last-child {
+      padding-block-end: 0;
+      @include m.respond-to('md') {
+        padding-inline-end: 0;
+      }
+    }
+
+    .column__label {
+      // padding-block: 
+    }
+
+    @each $name, $value in $sizes {
+      @include m.respond-to('md') {
+        &--#{$name} {
+          width: #{$value} + '%';
+          flex: none;
+        }
+      }
+    }
+  }
+}

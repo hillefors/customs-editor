@@ -1,0 +1,93 @@
+// settings/_derived.scss
+
+@use 'sass:map';
+@use 'sass:string';
+@use 'sass:list';
+@use 'functions' as f;
+@use './variables/colors' as c;
+@use './variables/spacing' as s;
+@use './variables/radius' as r;
+@use './variables/shadows' as sh;
+@use './variables/typography' as t;
+
+// --------------------------------------------------
+// Derived color maps
+// --------------------------------------------------
+
+// Roles that has scales
+$color-scale-roles: ("primary", "secondary", "accent", "gray") !default;
+
+// Roles that should receive very-light surface/fill variants
+$color-surface-roles: ("primary", "secondary", "accent", "link", "success", "info", "warning", "danger") !default;
+
+// Master color map
+$colors: (
+  "primary": c.$color-primary,
+  "secondary": c.$color-secondary,
+  "accent": c.$color-accent,
+  "link": c.$color-link,
+  "body-bg": c.$color-body-bg,
+  "surface": c.$color-surface,
+  "body-text": c.$color-body-text,
+  "gray": c.$color-gray,
+  "border": c.$color-border,
+  "border-hover": c.$color-border-hover,
+  "link-hover": c.$color-link-hover,
+  "success": c.$color-success,
+  "info": c.$color-info,
+  "warning": c.$color-warning,
+  "danger": c.$color-danger,
+  "white": c.$color-fill-white,
+  "black": c.$color-fill-black,
+  "off-white": c.$color-fill-off-white
+) !default;
+
+// Generate scales for roles that need them, and merge back into master map
+@each $name, $value in $colors {
+  @if list.index($color-scale-roles, $name) != null {
+    $scale: f.color-scale($value);
+
+    @each $step, $scaled in $scale {
+      $colors: map.merge($colors, ("#{$name}-#{$step}": $scaled));
+    }
+  }
+}
+
+// Generate surface variants for roles that need them, and merge back into master map
+$surface-colors: ();
+
+@each $name, $value in $colors {
+  @if list.index($color-surface-roles, $name) != null {
+    $surface-colors: map.merge($surface-colors, (
+      "#{$name}-surface": f.surface-color($value, c.$color-surface-strength),
+      "#{$name}-surface-border": f.surface-color($value, c.$color-surface-border-strength),
+    ));
+  }
+}
+
+$colors: map.merge($colors, $surface-colors);
+
+// --------------------------------------------------
+// Derived Spacing + radius maps
+// --------------------------------------------------
+
+$spacers: f.scale-to-map(s.$spacing-multipliers, s.$default-spacer);
+$radiuses: f.scale-to-map(r.$radius-multipliers, r.$radius-base);
+
+// --------------------------------------------------
+// CSS var mirror maps - Public runtime token surface
+// --------------------------------------------------
+
+@function css-var-map($m, $prefix) {
+  $out: ();
+  @each $name, $value in $m {
+    $out: map.merge($out, ($name: string.unquote("var(--#{$prefix}-#{$name})")));
+  }
+  @return $out;
+}
+
+$colors-css: css-var-map($colors, "color");
+$spacers-css: css-var-map($spacers, "space");
+$spacers-css-auto: css-var-map(map.merge($spacers, (auto: auto)), "space");
+$radiuses-css: css-var-map($radiuses, "radius");
+$shadows-css: css-var-map(sh.$shadows, "shadow"); // if you keep $shadows as a map

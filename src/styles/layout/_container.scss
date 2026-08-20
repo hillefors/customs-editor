@@ -1,0 +1,20 @@
+/* layout/_container.scss */
+
+@use 'sass:map';
+@use '../settings' as s;
+@use '../settings/mixins' as m;
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  // Horizontal gutter so content never hugs the viewport edge (mostly felt on
+  // mobile, where no max-width applies). Override per project via
+  // --container-padding-x. Safe with the global border-box reset.
+  padding-inline: var(--container-padding-x, var(--space-3));
+
+  @each $bp, $max in s.$container-max-widths {
+    @include m.respond-to($bp) {
+      max-width: $max;
+    }
+  }
+}

@@ -1,0 +1,9 @@
+// settings/mixins/_debug-tools.scss
+
+// Contrast debugger. View all colors as grayscale filter to better see how well they contrast each other.
+// Sets <HTML> to grayscale. May be sensitive to position variations, z-index and other properties.
+@mixin debug-color-contrast($on: true) {
+  @if $on {
+    html { filter: grayscale(100%); }
+  }
+}

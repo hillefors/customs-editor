@@ -1,0 +1,20 @@
+/* base/_base.scss */
+
+@use '../settings' as s;
+@use '../settings/mixins' as m;
+
+// Debug color contrast, set the debug-color-contrast variable in settings/_variables
+@include m.debug-color-contrast(s.$debug-color-contrast); 
+
+html {
+  font-size: var(--font-size-base);
+}
+
+body {
+  background-color: var(--color-body-bg);
+  color: var(--color-body-text);
+}
+
+[role="button"] {
+  cursor: pointer;
+}

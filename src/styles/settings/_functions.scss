@@ -1,0 +1,106 @@
+// settings/_functions.scss
+
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:color';
+@use 'sass:math';
+
+// Convert: Scale to map
+// Example:
+//  $multipliers: 0.1 0.2 0.3 ...;
+//  $base: 1rem;
+//  @return: (1: 0.1rem, 2: 0.2rem, 3: 0.3rem, ...) 
+@function scale-to-map($multipliers, $base) {
+  $result: ();
+
+  @for $i from 1 through list.length($multipliers) {
+    $value: list.nth($multipliers, $i) * $base;
+    $result: map.set($result, $i - 1, $value);
+  }
+
+  @return $result;
+}
+
+// Convert: List to map
+// Example: 
+//  $list: a b;
+//  @return: (a: a, b: b);
+@function list-to-map($list) {
+  $out: ();
+
+  @each $item in $list {
+    $out: map.set($out, $item, $item);
+  }
+
+  @return $out;
+}
+
+// Get light or dark based on calculating a colors relative luminance or perceived brightness (YIQ formula)
+// Example:
+//   $color: color to test
+//   $dark: optional color to return as dark
+//   $light: optional color to return as light
+//   @return: light or dark, whichever scores the best constrast
+@function yiq-contrast-color($color, $dark: #000, $light: #fff) {
+  $r: color.channel($color, 'red');
+  $g: color.channel($color, 'green');
+  $b: color.channel($color, 'blue');
+
+  // YIQ formula for brightness
+  $yiq: calc((($r * 299) + ($g * 587) + ($b * 114)) / 1000);
+
+  @if $yiq >=128 {
+    @return $dark;
+  }
+
+  @else {
+    @return $light;
+  }
+}
+
+// Get the color scale based off a base color (100, 300, 500(identity anchor), 700, 900)
+// Example:
+//   $color: base color
+//   @return: () color scale map
+@function color-scale($base-color) {
+  @return (
+    100: -round-color(color.scale($base-color, $lightness: +45%)),
+    300: -round-color(color.scale($base-color, $lightness: +25%)),
+    500: -round-color($base-color),
+    700: -round-color(color.scale($base-color, $lightness: -15%)),
+    900: -round-color(color.scale($base-color, $lightness: -35%))
+  );
+}
+
+// Generate a very light surface/fill color from any base color.
+// Higher $strength = lighter result (because more white is mixed in).
+@function surface-color($base-color, $strength: 88%, $mix-color: #fff) {
+  @return -round-color(color.mix($mix-color, $base-color, $strength));
+}
+
+// "r, g, b" triplet string, for use inside rgba(var(--x-rgb), a).
+@function rgb-triplet($c) {
+  @return "#{color.channel($c, "red", $space: rgb)}, #{color.channel($c, "green", $space: rgb)}, #{color.channel($c, "blue", $space: rgb)}";
+}
+
+// A near-neutral shade at $lightness that carries only $saturation of $tint's
+// HUE. Saturation is fixed (NOT derived from $tint), so the tint stays equally
+// minimal no matter how vivid $color-primary is — a neon red and a muted green
+// give the same whisper, just a different hue. $saturation: 0% → a pure gray
+// (true neutral) regardless of $tint. Used for theme neutrals (bg/surface/etc.).
+@function hue-shade($tint, $saturation, $lightness) {
+  @return -round-color(hsl(color.channel($tint, "hue", $space: hsl), $saturation, $lightness));
+}
+
+// Snap a color's channels to whole numbers (public wrapper).
+@function round-color($c) {
+  @return -round-color($c);
+}
+
+@function -round-color($c) {
+  @return rgb(
+    math.round(color.channel($c, "red", $space: rgb)),
+    math.round(color.channel($c, "green", $space: rgb)),
+    math.round(color.channel($c, "blue", $space: rgb))
+  );
+}

@@ -1,0 +1,21 @@
+/* base/_headings.scss */
+
+@use 'sass:map';
+@use '../settings/variables/typography' as t;
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+h1,h2,h3 {
+  letter-spacing: -0.01em;
+}
+
+@each $tag, $scale in t.$heading-scale {
+  #{$tag} {
+    font-size: calc(var(--font-size-base) * #{$scale});
+  }
+}

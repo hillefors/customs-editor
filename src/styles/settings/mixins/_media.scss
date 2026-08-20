@@ -1,0 +1,30 @@
+// settings/mixins/_media.scss
+
+@use 'sass:meta';
+@use 'sass:map';
+@use '../' as s;
+
+@mixin respond-to($breakpoint) {
+  $value: null;
+  $type: meta.type-of($breakpoint);
+
+  // Accept "sm" (string) or sm (identifier) or 48em (number)
+  @if $type == "string" or $type == "identifier" {
+    $value: map.get(s.$breakpoints, $breakpoint);
+  } @else if $type == "number" {
+    $value: $breakpoint;
+  } @else {
+    @warn "respond-to(): invalid breakpoint `#{$breakpoint}` (type: #{$type}).";
+  }
+
+  @if $value == null {
+    @warn "respond-to(): breakpoint `#{$breakpoint}` not found in $breakpoints.";
+  } @else if meta.type-of($value) == "number" and $value == 0 {
+    // xs/base tier: no media query wrapper
+    @content;
+  } @else {
+    @media (min-width: $value) {
+      @content;
+    }
+  }
+}

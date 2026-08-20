@@ -1,0 +1,33 @@
+/* _index.scss */
+
+// Public API (tokens, functions, mixins), also available CSS-free via
+// `@use "dashcss/abstracts"`.
+@forward 'abstracts';
+
+// base
+@use 'base/base';
+@use 'base/code';
+@use 'base/headings';
+@use 'base/links';
+@use 'base/reset';
+@use 'base/root-vars';
+@use 'base/themes';
+@use 'base/typography';
+
+// layout
+@use 'layout/container';
+@use 'layout/columns';
+
+// components
+@use 'components/buttons';
+@use 'components/card';
+@use 'components/custom';
+@use 'components/forms';
+@use 'components/navbar';
+@use 'components/titles';
+
+// utilities
+@use 'utilities/utilities';
+
+// imports
+@use 'imports/fonts';

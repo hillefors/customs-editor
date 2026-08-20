@@ -1,0 +1,66 @@
+/* base/_root-vars.scss */
+
+@use "../settings" as s;
+@use "../settings/functions" as f;
+
+// Root vars: Public runtime token surface. The light theme is the default here;
+// dark + explicit overrides live in base/_themes.scss.
+:root {
+  /* colors */
+  @each $name, $value in s.$colors {
+    --color-#{$name}: #{$value};
+
+    // Only generate rgb triplets for actual colors (skip nulls if any)
+    @if $value != null {
+      --color-#{$name}-rgb: #{f.rgb-triplet($value)};
+    }
+  }
+
+  --color-muted: #{s.$color-gray};
+
+  /* typography */
+  --font-body: #{s.$font-body};
+  --font-heading: #{s.$font-heading};
+  --font-monospace: #{s.$font-monospace};
+  @each $val in s.$font-weights {
+    --font-weight-#{$val}: #{$val};
+  }
+  @each $name, $val in s.$font-sizes {
+    --font-size-#{$name}: #{$val};
+  }
+
+  /* transition */
+  --transition-function-base: #{s.$cubic-bezier-base};
+  --transition-time-base: #{s.$transition-time-base};
+
+  /* spacing scale */
+  @each $step, $val in s.$spacers {
+    --space-#{$step}: #{$val};
+  }
+
+  /* radius scale */
+  @each $step, $val in s.$radiuses {
+    --radius-#{$step}: #{$val};
+  }
+
+  /* shadows */
+  @each $step, $val in s.$shadows {
+    --shadow-#{$step}: #{$val};
+  }
+
+  /* layout */
+  --navbar-height: 4.5rem;
+  --column-gap: #{s.$column-gap};
+  --container-padding-x: var(--spacing-3);
+
+  /* buttons */
+  --button-border-radius: #{s.$button-border-radius};
+
+  /* fields */
+  --field-block-spacer: #{s.$field-block-spacer};
+  --label-block-spacer: #{s.$label-block-spacer};
+  --input-radius: #{s.$input-radius};
+  --input-focus-shadow-size: #{s.$input-focus-shadow-size};
+  --input-padding-vertical: #{s.$input-padding-vertical};
+  --input-padding-horizontal: #{s.$input-padding-horizontal};
+}

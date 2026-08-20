@@ -1,0 +1,66 @@
+// settings/mixins/_utilities.scss
+
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+@use '../' as s;
+@use '../functions' as f;
+@use 'media' as m;
+
+// Generate util class
+@mixin generate-util-class($name, $data, $responsive: false) {
+  $isResponsive: map.get($data, 'responsive');
+  $property: map.get($data, 'property');
+  $class: map.get($data, 'class');
+  $values: map.get($data, 'values');
+
+  @if $class ==null {
+    $class: $name;
+  }
+
+  // convert any list to a map
+  @if meta.type-of($values)=='list' {
+    $values: f.list-to-map($values);
+  }
+
+  @each $valueName, $value in $values {
+    $suffix: "";
+
+    @if $valueName !=null {
+      $suffix: "-#{$valueName}";
+    }
+
+    @if $responsive == false or $responsive == null {
+      .#{$class}#{$suffix} {
+        @include -apply-props($property, $value);
+      }
+    }
+
+    @if $responsive ==true and $isResponsive ==true {
+      @each $bp, $bpv in s.$breakpoints {
+        @each $bp, $bpv in s.$breakpoints {
+          @if $bpv != 0 {
+            @include m.respond-to($bp) {
+              .#{$bp}\:#{$class}#{$suffix} { 
+                @include -apply-props($property, $value);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Apply props to class
+@mixin -apply-props($prop, $value) {
+  @if meta.type-of($prop)=='list' {
+    @each $p in $prop {
+      #{$p}: $value !important;
+    }
+  }
+
+  @else {
+    #{$prop}: $value !important;
+  }
+}

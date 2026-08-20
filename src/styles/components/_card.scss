@@ -1,0 +1,80 @@
+/* components/_card.scss */
+
+// The card is the canonical surface primitive: a bordered, rounded panel.
+// Padding is included by default and can be removed with `--flush` for
+// edge-to-edge content (media, color fills, tables, etc.).
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-4);
+  padding: var(--space-4);
+
+  &--flush {
+    padding: 0;
+  }
+
+  &--outline {
+    background: transparent;
+  }
+
+  &--soft {
+    background: var(--color-off-white);
+    border-color: transparent;
+  }
+
+  // Role surfaces — a tinted background with a matching, same-hue border (like
+  // alert variants). Both tokens are theme-aware, so light uses opaque tints and
+  // dark uses translucent overlays automatically.
+  @each $role in (primary, secondary, accent, link, success, info, warning, danger) {
+    &--#{$role} {
+      background: var(--color-#{$role}-surface);
+      border-color: var(--color-#{$role}-surface-border);
+    }
+  }
+
+  &--elevated {
+    box-shadow: var(--shadow-1);
+  }
+
+  // Opt-in hover affordance for clickable cards
+  &--interactive {
+    transition: transform var(--transition-time-base) var(--transition-function-base),
+      box-shadow var(--transition-time-base) var(--transition-function-base),
+      border-color var(--transition-time-base) var(--transition-function-base);
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-2);
+      border-color: var(--color-border-hover);
+    }
+  }
+
+  /* Card title */
+  &__title {
+    margin-bottom: var(--space-4);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  /* Card label, a variant to the title */
+  &__label {
+    font-size: var(--font-size-sm, 0.85rem);
+    margin-bottom: var(--space-3);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+
+  &__body {
+    // optional: no extra styles, but gives a hook
+  }
+
+  &__footer {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+}

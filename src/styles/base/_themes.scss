@@ -1,0 +1,98 @@
+/* base/_themes.scss */
+
+@use "sass:map";
+@use "sass:color";
+@use "../settings" as s;
+@use "../settings/functions" as f;
+
+// --------------------------------------------------
+// Theming — light / dark token overrides
+//
+// Only the neutral / semantic-neutral tokens flip between themes; brand and
+// status hues (primary, accent, success…) stay put so baked-in button text
+// colors remain valid. Surface tints flip to translucent overlays in dark.
+//
+// Everything tinted derives from $color-primary (or its own base token), so a
+// `@use "dashcss" with ($color-primary: …)` override carries through both
+// themes — nothing is hand-picked to a fixed hue.
+// --------------------------------------------------
+
+// Light values, sourced from the single-source-of-truth color settings so
+// forcing light (`[data-theme="light"]`) never drifts from the defaults.
+@mixin theme-light {
+  color-scheme: light;
+
+  --color-body-bg: #{s.$color-body-bg};      --color-body-bg-rgb: #{f.rgb-triplet(s.$color-body-bg)};
+  --color-body-text: #{s.$color-body-text};  --color-body-text-rgb: #{f.rgb-triplet(s.$color-body-text)};
+  --color-surface: #{s.$color-surface};
+  --color-off-white: #{s.$color-fill-off-white};
+  --color-gray: #{s.$color-gray};            --color-gray-rgb: #{f.rgb-triplet(s.$color-gray)};
+  --color-muted: #{s.$color-gray};
+  --color-border: #{s.$color-border};        --color-border-rgb: #{f.rgb-triplet(s.$color-border)};
+  --color-border-hover: #{s.$color-border-hover}; --color-border-hover-rgb: #{f.rgb-triplet(s.$color-border-hover)};
+  --color-link: #{s.$color-link};            --color-link-rgb: #{f.rgb-triplet(s.$color-link)};
+  --color-link-hover: #{s.$color-link-hover}; --color-link-hover-rgb: #{f.rgb-triplet(s.$color-link-hover)};
+
+  // Surface tint + matching border for every surface role (opaque tints).
+  @each $role in s.$color-surface-roles {
+    --color-#{$role}-surface: #{map.get(s.$colors, "#{$role}-surface")};
+    --color-#{$role}-surface-border: #{map.get(s.$colors, "#{$role}-surface-border")};
+  }
+}
+
+@mixin theme-dark {
+  $tint: s.$color-primary;
+  $sat: s.$theme-tint-saturation;
+
+  // Neutral dark ramp: fixed-saturation shades that carry only the brand HUE, so
+  // the tint stays minimal for any primary (a vivid red no longer over-tints).
+  // $theme-tint-saturation: 0% → a pure-neutral gray ramp.
+  $bg:       f.hue-shade($tint, $sat, 6%);     // near-black page
+  $surface:  f.hue-shade($tint, $sat, 10%);    // elevated panel
+  $sunken:   f.hue-shade($tint, $sat, 13.5%);  // hover / soft fills
+  $border:   f.hue-shade($tint, $sat, 19%);
+  $border-h: f.hue-shade($tint, $sat, 26%);
+  $muted:    f.hue-shade($tint, $sat, 62%);
+  $text:     f.hue-shade($tint, $sat, 91%);
+
+  // Link derives from its own base token, lightened to read on the dark canvas.
+  $link:     f.round-color(color.scale(s.$color-link, $lightness: 55%, $saturation: 15%));
+  $link-h:   f.round-color(color.scale(s.$color-link, $lightness: 70%, $saturation: 15%));
+
+  color-scheme: dark;
+
+  --color-body-bg: #{$bg};            --color-body-bg-rgb: #{f.rgb-triplet($bg)};
+  --color-body-text: #{$text};        --color-body-text-rgb: #{f.rgb-triplet($text)};
+  --color-surface: #{$surface};
+  --color-off-white: #{$sunken};
+  --color-gray: #{$muted};            --color-gray-rgb: #{f.rgb-triplet($muted)};
+  --color-muted: #{$muted};
+  --color-border: #{$border};         --color-border-rgb: #{f.rgb-triplet($border)};
+  --color-border-hover: #{$border-h}; --color-border-hover-rgb: #{f.rgb-triplet($border-h)};
+  --color-link: #{$link};             --color-link-rgb: #{f.rgb-triplet($link)};
+  --color-link-hover: #{$link-h};     --color-link-hover-rgb: #{f.rgb-triplet($link-h)};
+
+  // Translucent overlays read correctly on any dark surface. Secondary is a
+  // dark slate whose own hue would vanish on the dark canvas, so it uses a
+  // neutral white overlay instead.
+  @each $role in s.$color-surface-roles {
+    @if $role == "secondary" {
+      --color-secondary-surface: rgba(255, 255, 255, 0.06);
+      --color-secondary-surface-border: rgba(255, 255, 255, 0.14);
+    } @else {
+      --color-#{$role}-surface: rgba(var(--color-#{$role}-rgb), 0.16);
+      --color-#{$role}-surface-border: rgba(var(--color-#{$role}-rgb), 0.34);
+    }
+  }
+}
+
+// Follow the OS setting out of the box …
+@media (prefers-color-scheme: dark) {
+  :root { @include theme-dark; }
+}
+
+// … and allow an explicit override via `data-theme` on <html> or <body>.
+// Attribute selectors come after :root so they win by source order (and on
+// <body> they also win over <html> by proximity).
+[data-theme="light"] { @include theme-light; }
+[data-theme="dark"]  { @include theme-dark; }

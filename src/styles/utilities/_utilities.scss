@@ -1,0 +1,419 @@
+/* utilities/_utilities.scss */
+
+@use 'sass:list';
+@use 'sass:map';
+@use '../settings' as s;
+@use '../settings/mixins' as m;
+
+$util-classes: 
+(
+  // size utils 
+  "width": (
+    responsive: true,
+    property: width,
+    class: w,
+    values: s.$size-percentages
+  ),
+  "max-width": (
+    responsive: true,
+    property: max-width,
+    class: mw,
+    values: s.$size-percentages
+  ),
+  "height": (
+    responsive: true,
+    property: height,
+    class: h,
+    values: s.$size-percentages
+  ),
+  "min-height": (
+    responsive: true,
+    property: min-height,
+    class: min-h,
+    values: ('screen': 100vh)
+  ),
+  // positioning utils
+  "position": (
+    responsive: true,
+    property: position,
+    class: position,
+    values: static relative absolute fixed sticky
+  ),
+  "top": (
+    responsive: true,
+    property: top,
+    class: top,
+    values: ('0': 0, '50': 50%, '100': 100%)
+  ),
+  "right": (
+    responsive: true,
+    property: right,
+    class: right,
+    values: ('0': 0, '50': 50%, '100': 100%)
+  ),
+  "bottom": (
+    responsive: true,
+    property: bottom,
+    class: bottom,
+    values: ('0': 0, '50': 50%, '100': 100%)
+  ),
+  "left": (
+    responsive: true,
+    property: left,
+    class: left,
+    values: ('0': 0, '50': 50%, '100': 100%)
+  ),
+  "z-index": (
+    responsive: true,
+    property: z-index,
+    class: z,
+    values: (
+      auto: auto,
+      0: 0,
+      10: 10,
+      20: 20,
+      30: 30,
+      40: 40,
+      50: 50,
+      100: 100,
+      200: 200,
+      300: 300,
+      400: 400,
+      500: 500,
+      1000: 1000
+    )
+  ),
+  // color utils
+  "text": (
+    property: color,
+    class: color,
+    values: s.$colors-css
+  ),
+  "background": (
+    property: background-color,
+    class: bg,
+    values: s.$colors-css
+  ),
+  // typography
+  "font-size": (
+    responsive: true,
+    property: font-size,
+    class: font-size,
+    values: s.$font-sizes
+  ),
+  "font-weight": (
+    property: font-weight,
+    class: fw,
+    values: s.$font-weights
+  ),
+  "text-align": (
+    responsive: true,
+    property: text-align,
+    class: text,
+    values: (
+      left: left,
+      right: right,
+      center: center,
+    )
+  ),
+  // display utils
+  "display": (
+    responsive: true,
+    property: display,
+    class: d,
+    values: inline inline-block block grid table table-row table-cell flex inline-flex none
+  ),
+  // shadow utils
+  "box-shadow": (
+    responsive: true,
+    property: box-shadow,
+    class: shadow,
+    values: s.$shadows-css
+  ),
+  // padding utils
+  "padding": (
+    responsive: true,
+    property: padding,
+    class: p,
+    values: s.$spacers-css
+  ),
+  "padding-x": (
+    responsive: true,
+    property: padding-right padding-left,
+    class: px,
+    values: s.$spacers-css
+  ),
+  "padding-y": (
+    responsive: true,
+    property: padding-top padding-bottom,
+    class: py,
+    values: s.$spacers-css
+  ),
+  "padding-top": (
+    responsive: true,
+    property: padding-top,
+    class: pt,
+    values: s.$spacers-css
+  ),
+  "padding-right": (
+    responsive: true,
+    property: padding-right,
+    class: pr,
+    values: s.$spacers-css
+  ),
+  "padding-bottom": (
+    responsive: true,
+    property: padding-bottom,
+    class: pb,
+    values: s.$spacers-css
+  ),
+  "padding-left": (
+    responsive: true,
+    property: padding-left,
+    class: pl,
+    values: s.$spacers-css
+  ),
+  // margin utils
+  "margin": (
+    responsive: true,
+    property: margin,
+    class: m,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  "margin-x": (
+    responsive: true,
+    property: margin-right margin-left,
+    class: mx,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  "margin-y": (
+    responsive: true,
+    property: margin-top margin-bottom,
+    class: my,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  "margin-top": (
+    responsive: true,
+    property: margin-top,
+    class: mt,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  "margin-right": (
+    responsive: true,
+    property: margin-right,
+    class: mr,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  "margin-bottom": (
+    responsive: true,
+    property: margin-bottom,
+    class: mb,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  "margin-left": (
+    responsive: true,
+    property: margin-left,
+    class: ml,
+    values: map.merge(s.$spacers-css, (auto: auto))
+  ),
+  // gap utils
+  "gap": (
+    responsive: true,
+    property: gap,
+    class: gap,
+    values: s.$spacers-css
+  ),
+  "row-gap": (
+    responsive: true,
+    property: row-gap,
+    class: row-gap,
+    values: s.$spacers-css
+  ),
+  "column-gap": (
+    responsive: true,
+    property: column-gap,
+    class: column-gap,
+    values: s.$spacers-css
+  ),
+  // rounded utils
+  "rounded": (
+    property: border-radius,
+    class: rounded,
+    values: s.$radiuses-css
+  ),
+  "rounded-top": (
+    property: border-top-left-radius border-top-right-radius,
+    class: rounded-top,
+    values: s.$radiuses-css
+  ),
+  "rounded-right": (
+    property: border-top-right-radius border-bottom-right-radius,
+    class: rounded-right,
+    values: s.$radiuses-css
+  ),
+  "rounded-bottom": (
+    property: border-bottom-left-radius border-bottom-right-radius,
+    class: rounded-bottom,
+    values: s.$radiuses-css
+  ),
+  "rounded-left": (
+    property: border-top-left-radius border-bottom-left-radius,
+    class: rounded-left,
+    values: s.$radiuses-css
+  ),
+  // border utils
+  "border": (
+    responsive: true,
+    property: border,
+    values: (
+      null: 1px solid var(--color-border),
+      0: 0
+    )
+  ),
+  "border-top": (
+    responsive: true,
+    property: border-top,
+    values: (
+      null: 1px solid var(--color-border),
+      0: 0
+    )
+  ),
+  "border-right": (
+    responsive: true,
+    property: border-right,
+    values: (
+      null: 1px solid var(--color-border),
+      0: 0
+    )
+  ),
+  "border-bottom": (
+    responsive: true,
+    property: border-bottom,
+    values: (
+      null: 1px solid var(--color-border),
+      0: 0
+    )
+  ),
+  "border-left": (
+    responsive: true,
+    property: border-left,
+    values: (
+      null: 1px solid var(--color-border),
+      0: 0
+    )
+  ),
+  "border-color": (
+    property: border-color,
+    class: border,
+    values: s.$colors-css
+  ),
+  // flexbox utils
+  "flex": (
+    responsive: true,
+    property: flex,
+    values: (fill: 1 1 auto)
+  ),
+  "flex-direction": (
+    responsive: true,
+    property: flex-direction,
+    class: flex,
+    values: row column row-reverse column-reverse
+  ),
+  "flex-grow": (
+    responsive: true,
+    property: flex-grow,
+    class: flex,
+    values: (
+      0: 0,
+      1: 1,
+    )
+  ),
+  "flex-shrink": (
+    responsive: true,
+    property: flex-shrink,
+    class: flex,
+    values: (
+      shrink-0: 0,
+      shrink-1: 1,
+    )
+  ),
+  "flex-wrap": (
+    responsive: true,
+    property: flex-wrap,
+    class: flex,
+    values: wrap nowrap wrap-reverse
+  ),
+  "justify-content": (
+    responsive: true,
+    property: justify-content,
+    class: justify,
+    values: (
+      start: flex-start,
+      end: flex-end,
+      center: center,
+      between: space-between,
+      around: space-around,
+      evenly: space-evenly,
+    )
+  ),
+  "align-items": (
+    responsive: true,
+    property: align-items,
+    class: align,
+    values: (
+      start: flex-start,
+      end: flex-end,
+      center: center,
+      baseline: baseline,
+      stretch: stretch,
+    )
+  ),
+  "align-content": (
+    responsive: true,
+    property: align-content,
+    values: (
+      start: flex-start,
+      end: flex-end,
+      center: center,
+      between: space-between,
+      around: space-around,
+      stretch: stretch,
+    )
+  ),
+  "align-self": (
+    responsive: true,
+    property: align-self,
+    values: (
+      auto: auto,
+      start: flex-start,
+      end: flex-end,
+      center: center,
+      baseline: baseline,
+      stretch: stretch,
+    )
+  ),
+  "order": (
+    responsive: true,
+    property: order,
+    values: (
+      first: -1,
+      0: 0,
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      last: 6,
+    ),
+  ),
+);
+
+// Generate base classes
+@each $name, $data in $util-classes {
+  @include m.generate-util-class($name, $data, $responsive: false);
+}
+
+// Generate responsive classes after base classes so that they will take prio
+@each $name, $data in $util-classes {
+  @include m.generate-util-class($name, $data, $responsive: true);
+}

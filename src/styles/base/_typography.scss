@@ -1,0 +1,24 @@
+/* base/_typography.scss */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--default-font-size);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  
+  &:hover {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.15em;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 0.125rem;
+  }
+}

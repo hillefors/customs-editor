@@ -1,0 +1,16 @@
+// scss/_abstracts.scss
+//
+// The dashcss API with NO CSS output: design tokens, functions and mixins.
+// Import this in partials that only need the toolkit (e.g. respond-to) without
+// re-emitting the whole stylesheet:
+//
+//   @use "dashcss/abstracts" as d;
+//   .card { @include d.respond-to('md') { padding: d.$default-spacer; } }
+//
+// The main entry (`@use "dashcss"`) forwards all of this too, but also emits the
+// compiled CSS — so use THIS entry everywhere except the single place you pull
+// in the stylesheet.
+
+@forward 'settings';            // design tokens: $colors, $breakpoints, $spacers, $radiuses…
+@forward 'settings/functions';  // surface-color, hue-shade, rgb-triplet, scale-to-map…
+@forward 'settings/mixins';     // respond-to, generate-util-class, debug tools

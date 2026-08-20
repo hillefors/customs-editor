@@ -1,0 +1,9 @@
+// settings/variables/_spacing.scss
+
+$default-spacer: 1rem !default;
+$spacing-multipliers: 0, 0.25, 0.5, 1, 1.5, 3, 6;
+$column-gap: 0.75rem !default;
+$field-block-spacer: 0.75rem !default;
+$label-block-spacer: 0.5em !default;
+$input-padding-vertical: calc(0.5em - 1px) !default;
+$input-padding-horizontal: calc(0.75em - 1px) !default;
