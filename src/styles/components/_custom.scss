@@ -1,7 +1,52 @@
 /* components/_custom.scss */
 
-// The customs editor: an add-form and the ordered list of customs it builds.
+// The customs editor: an add-form and the four ordered boxes it builds.
 // Leans entirely on the framework tokens so it inherits theming for free.
+
+// --- The shareable-link panel ---------------------------------------------
+// A compact bar: the live link on the left, a copy button, and a hint line
+// spanning underneath.
+.share {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2) var(--space-3);
+  align-items: end;
+
+  &__text {
+    min-width: 0; // let the read-only URL truncate instead of stretching
+  }
+
+  &__label {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-700);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  &__url {
+    width: 100%;
+    font-family: var(--font-monospace);
+    font-size: var(--font-size-sm);
+    text-overflow: ellipsis;
+    background: var(--color-surface);
+    cursor: text;
+  }
+
+  &__copy {
+    white-space: nowrap;
+  }
+
+  &__hint {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+    line-height: 1.4;
+  }
+}
 
 // --- The add-a-custom form ------------------------------------------------
 .custom-form {
@@ -11,12 +56,11 @@
 
   // Name + type sit on one row from md up; description spans full width.
   @media (min-width: 40rem) {
-    grid-template-columns: 1fr auto auto;
-    align-items: end;
+    grid-template-columns: 1fr auto;
+    align-items: start;
 
     &__name  { grid-column: 1 / 2; }
     &__type  { grid-column: 2 / 3; }
-    &__remove  { grid-column: 3 / 4; }
     &__desc  { grid-column: 1 / -1; }
     &__submit { grid-column: 1 / -1; }
   }
@@ -24,48 +68,151 @@
   // Kill the default field margin so the grid gap owns the spacing.
   .field { margin-bottom: 0; }
 
+  &__name { position: relative; }
+
+  // Live character counter, tucked under the name field.
+  &__hint {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+
+    &--over { color: var(--color-danger); font-weight: var(--font-weight-700); }
+  }
+
   &__submit {
     display: flex;
+    justify-content: flex-end;
   }
 }
 
-// --- The ordered list -----------------------------------------------------
+// The framework's .input only styles focus; add an invalid state.
+.input--invalid {
+  border-color: var(--color-danger) !important;
+}
+
+// --- The four category boxes ----------------------------------------------
+// Side by side on wide screens, collapsing to fewer columns as space runs out
+// (auto-fit + a min track). align-items:start keeps each column its own height.
+.custom-boxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.custom-box {
+  --box-accent: var(--color-gray);
+  --box-surface: var(--color-off-white);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-4);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--box-surface);
+    border-bottom: 1px solid var(--color-border);
+    border-left: 3px solid var(--box-accent);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-700);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--box-accent);
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 0.35rem;
+    border-radius: 40rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-700);
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Per-type accents (header title, bar, tinted header background).
+  &--fave  { --box-accent: var(--color-accent);  --box-surface: var(--color-accent-surface); }
+  &--yes   { --box-accent: var(--color-success); --box-surface: var(--color-success-surface); }
+  &--maybe { --box-accent: var(--color-warning); --box-surface: var(--color-warning-surface); }
+  &--no    { --box-accent: var(--color-danger);  --box-surface: var(--color-danger-surface); }
+}
+
+// --- The list inside a box ------------------------------------------------
 .customs {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   margin: 0;
-  padding: 0;
+  padding: var(--space-3);
   list-style: none;
 }
 
 .customs__empty {
   color: var(--color-muted);
   text-align: center;
-  padding: var(--space-4);
+  padding: var(--space-3);
   border: 1px dashed var(--color-border);
-  border-radius: var(--radius-4);
+  border-radius: var(--radius-3);
+  font-size: var(--font-size-sm);
 }
 
 // --- A single custom ------------------------------------------------------
 .custom {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-3);
+  gap: var(--space-2);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-4);
-  padding: var(--space-3);
+  border-radius: var(--radius-3);
+  padding: var(--space-2) var(--space-3);
 
-  // The order badge, shows the human-readable tag key (0-9, A-G) that is
-  // encoded invisibly into the copied name.
-  &__order {
+  // Drag handle — the only grabbable part (SortableJS handle).
+  &__handle {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.75rem;
+    align-self: center;
+    padding: 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-border-hover);
+    cursor: grab;
+    border-radius: var(--radius-2);
+
+    svg { fill: currentColor; display: block; }
+
+    &:hover { color: var(--color-muted); background: var(--color-off-white); }
+    &:active { cursor: grabbing; }
+  }
+
+  // The order badge — shows the human-readable tag key (0-9, A-F, then 10…)
+  // that is encoded invisibly into the copied name.
+  &__order {
+    flex: 0 0 auto;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
     height: 1.75rem;
+    padding: 0 0.35rem;
     border-radius: var(--radius-2);
     background: var(--color-off-white);
     border: 1px solid var(--color-border);
@@ -73,17 +220,15 @@
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-700);
     color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
   }
 
   &__body {
     flex: 1 1 auto;
-    min-width: 0; // let long text wrap/ellipsize instead of blowing out flex
+    min-width: 0; // let long text wrap instead of blowing out the flex row
   }
 
   &__name {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
     font-weight: var(--font-weight-600);
     line-height: 1.3;
     word-break: break-word;
@@ -97,39 +242,37 @@
     word-break: break-word;
   }
 
+  &__warning {
+    margin-top: var(--space-1);
+    color: var(--color-danger);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-600);
+    line-height: 1.4;
+  }
+
   &__actions {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-1);
   }
-}
 
-// --- The type pill (Fave / Yes / Maybe / No) ------------------------------
-.custom-type {
-  display: inline-block;
-  padding: 0.1em 0.6em;
-  border-radius: 40rem;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-700);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  &__remove {
+    padding-inline: calc(var(--space-2) * 1.1);
+    font-size: var(--font-size-lg);
+    line-height: 1;
+    color: var(--color-muted);
 
-  &--fave {
-    background: var(--color-accent-surface);
-    color: color-mix(in srgb, var(--color-accent) 78%, var(--color-body-text));
+    &:hover { color: var(--color-danger); }
   }
-  &--yes {
-    background: var(--color-success-surface);
-    color: color-mix(in srgb, var(--color-success) 72%, var(--color-body-text));
-  }
-  &--maybe {
-    background: var(--color-warning-surface);
-    color: color-mix(in srgb, var(--color-warning) 70%, var(--color-body-text));
-  }
-  &--no {
+
+  // A custom whose name+tag exceeds the site limit.
+  &--overflow {
+    border-color: var(--color-danger);
     background: var(--color-danger-surface);
-    color: color-mix(in srgb, var(--color-danger) 72%, var(--color-body-text));
   }
+
+  // SortableJS drag states.
+  &--ghost { opacity: 0.4; }
+  &--drag  { box-shadow: var(--shadow-2); }
 }

@@ -18,3 +18,11 @@
     }
   }
 }
+
+// A roomier container for content that benefits from horizontal space (e.g.
+// side-by-side columns). Follows the standard widths up to lg, then opens up.
+.container--wide {
+  @include m.respond-to('xl') {
+    max-width: 90rem;
+  }
+}
