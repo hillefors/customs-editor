@@ -4,7 +4,7 @@
 // Leans entirely on the framework tokens so it inherits theming for free.
 
 // --- The shareable-link panel ---------------------------------------------
-// A compact bar: the live link on the left, a copy button, and a hint line
+// A compact bar: the live link on the left, and a hint line
 // spanning underneath.
 .share {
   display: grid;
@@ -35,16 +35,55 @@
     cursor: text;
   }
 
-  &__copy {
-    white-space: nowrap;
-  }
-
   &__hint {
     grid-column: 1 / -1;
     margin: 0;
     font-size: var(--font-size-sm);
     color: var(--color-muted);
     line-height: 1.4;
+  }
+}
+
+// --- The "push to site" export panel --------------------------------------
+.export {
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  &__label {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-700);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-danger);
+    margin-bottom: var(--space-1);
+  }
+
+  &__hint {
+    margin: 0;
+    max-width: 46rem;
+    font-size: var(--font-size-sm);
+    color: var(--color-body-text);
+    line-height: 1.45;
+  }
+
+  &__copy {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  &__warning {
+    margin: var(--space-3) 0 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-danger-surface-border);
+    font-size: var(--font-size-sm);
+    line-height: 1.45;
+    color: var(--color-body-text);
   }
 }
 

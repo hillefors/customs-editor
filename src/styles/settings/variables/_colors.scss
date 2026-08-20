@@ -8,13 +8,13 @@ $color-primary: #23598e;//#1f7a5c !default; // moss / pine green — brand ancho
 // surfaces, borders — in both light and dark). Fixed saturation means the tint
 // stays this subtle no matter how vivid the primary is. Set to 0% for pure,
 // true-neutral grays.
-$theme-tint-saturation: 6% !default;
+$theme-tint-saturation: 100% !default;
 $color-secondary: #3f4744 !default; // refined dark slate (subtle green undertone)
 $color-accent: #e8674f !default; // coral — complementary pop to the green
 
 // Soft off-white page carrying a whisper of the brand hue (fixed saturation,
 // so it never over-tints); follows a $color-primary override.
-$color-body-bg: f.hue-shade($color-primary, $theme-tint-saturation, 97.5%) !default;
+$color-body-bg: f.hue-shade(#08192d, $theme-tint-saturation, 97.5%) !default;
 $color-body-text: #212925 !default;
 $color-gray: #767c7a !default; // neutral slate-gray, ties to the palette
 $color-border: #dbdddd !default;

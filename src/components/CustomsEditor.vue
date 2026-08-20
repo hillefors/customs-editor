@@ -10,6 +10,7 @@ import {
 } from '../utils/share.js'
 import { copyText } from '../utils/clipboard.js'
 import CustomBox from './CustomBox.vue'
+import Export from './Export.vue'
 
 const TYPES = ['Fave', 'Yes', 'Maybe', 'No']
 
@@ -176,4 +177,6 @@ function removeCustom(type, item) {
       @remove="removeCustom(t, $event)"
     />
   </div>
+
+  <Export :groups="groups" class="mt-4" />
 </template>

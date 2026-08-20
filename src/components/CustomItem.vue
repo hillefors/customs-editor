@@ -19,16 +19,6 @@ const overflow = computed(
   () => taggedLength(props.custom.name, props.count) - NAME_LIMIT
 )
 
-const copied = ref(false)
-let copiedTimer
-
-async function copyName() {
-  const ok = await copyText(taggedName(props.custom.name, props.index, props.count))
-  if (!ok) return
-  copied.value = true
-  clearTimeout(copiedTimer)
-  copiedTimer = setTimeout(() => (copied.value = false), 1400)
-}
 </script>
 
 <template>
@@ -57,14 +47,6 @@ async function copyName() {
     </div>
 
     <div class="custom__actions">
-      <button
-        type="button"
-        class="btn btn--quiet"
-        :class="{ 'btn--link': copied }"
-        @click="copyName"
-      >
-        {{ copied ? 'Copied!' : 'Copy' }}
-      </button>
       <button
         type="button"
         class="btn btn--quiet custom__remove"
