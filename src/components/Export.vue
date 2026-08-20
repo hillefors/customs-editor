@@ -122,7 +122,7 @@ async function copyScript() {
         <span class="export__label">Push to the site</span>
         <p class="export__hint">
           Copies a console script that rebuilds your customs on <b>f-list</b>. <br />
-          Open your character's edit page, press F12, paste into the Console, and run it. Then click the site's own Save button.
+          Open your character's edit page, press F12, paste into the Console, and run it. Then click Save from the edit page.
         </p>
 
         <div class="export__warning">

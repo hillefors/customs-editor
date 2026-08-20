@@ -7,7 +7,7 @@ const props = defineProps({
   items: { type: Array, required: true },
 })
 
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['remove', 'edit'])
 
 const modifier = {
   Fave: 'custom-box--fave',
@@ -40,6 +40,7 @@ const modifier = {
           :index="index"
           :count="items.length"
           @remove="emit('remove', element)"
+          @edit="emit('edit', element)"
         />
       </template>
 

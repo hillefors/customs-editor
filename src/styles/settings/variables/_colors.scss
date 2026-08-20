@@ -2,15 +2,15 @@
 
 @use '../functions' as f;
 
-$color-primary: #23598e;//#1f7a5c !default; // moss / pine green — brand anchor
+$color-primary: #15bddf;//#1f7a5c !default; // moss / pine green — brand anchor
 
 // How much of $color-primary's hue bleeds into the theme neutrals (page bg,
 // surfaces, borders — in both light and dark). Fixed saturation means the tint
 // stays this subtle no matter how vivid the primary is. Set to 0% for pure,
 // true-neutral grays.
-$theme-tint-saturation: 100% !default;
+$theme-tint-saturation: 6% !default;
 $color-secondary: #3f4744 !default; // refined dark slate (subtle green undertone)
-$color-accent: #e8674f !default; // coral — complementary pop to the green
+$color-accent: #ba3d27 !default; // coral — complementary pop to the green
 
 // Soft off-white page carrying a whisper of the brand hue (fixed saturation,
 // so it never over-tints); follows a $color-primary override.

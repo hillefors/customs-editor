@@ -7,10 +7,13 @@ import {
   isEmpty,
   readStateParam,
   buildShareUrl,
+  saveLocal,
+  loadLocal,
 } from '../utils/share.js'
 import { copyText } from '../utils/clipboard.js'
 import CustomBox from './CustomBox.vue'
 import Export from './Export.vue'
+import EditCustomModal from './EditCustomModal.vue'
 
 const TYPES = ['Fave', 'Yes', 'Maybe', 'No']
 
@@ -41,18 +44,26 @@ function withId(c) {
 }
 
 onMounted(() => {
-  const restored = decodeState(readStateParam())
+  // A shared `?s=` link wins (someone deliberately opened it); otherwise fall
+  // back to this browser's autosaved work.
+  const restored = decodeState(readStateParam()) || loadLocal()
   if (restored) {
     for (const type of TYPES) groups[type] = restored[type].map(withId)
   }
 
-  // Keep the link + address bar in sync with any change to the customs.
+  // Keep the link + address bar in sync, and autosave locally, on every change.
+  // The first run (initial hydration) skips the local save so that merely
+  // opening someone else's share link doesn't overwrite your own saved work
+  // until you actually edit something.
+  let firstRun = true
   watch(
     groups,
     () => {
       const encoded = isEmpty(groups) ? '' : encodeState(groups)
       shareUrl.value = buildShareUrl(encoded)
       window.history.replaceState(null, '', shareUrl.value)
+      if (!firstRun) saveLocal(groups)
+      firstRun = false
     },
     { deep: true, immediate: true }
   )
@@ -95,12 +106,34 @@ function removeCustom(type, item) {
   const i = list.indexOf(item)
   if (i !== -1) list.splice(i, 1)
 }
+
+// --- Editing an existing custom (modal) -----------------------------------
+const editing = ref(null) // { item, type } while the modal is open
+
+function startEdit(type, item) {
+  editing.value = { item, type }
+}
+
+function applyEdit({ name, description, type }) {
+  const { item, type: oldType } = editing.value
+  item.name = name
+  item.description = description
+
+  // Changing the type moves the custom to the end of the target box.
+  if (type !== oldType) {
+    const from = groups[oldType]
+    const i = from.indexOf(item)
+    if (i !== -1) from.splice(i, 1)
+    groups[type].push(item)
+  }
+  editing.value = null
+}
 </script>
 
 <template>
   <section class="share card card--soft">
     <div class="share__text field">
-      <span class="share__label">Shareable link</span>
+      <span class="share__label">Link</span>
       <div class="d-flex gap-2">
         <input class="input share__url" :value="shareUrl" readonly @focus="$event.target.select()" />
         <button
@@ -150,12 +183,12 @@ function removeCustom(type, item) {
 
       <div class="field custom-form__desc">
         <label class="label" for="custom-desc">Description</label>
-        <input
+        <textarea
           id="custom-desc"
           v-model="draft.description"
           class="input"
           type="text"
-          placeholder="A note about this custom. Optional."
+          placeholder="A description of this custom. Optional."
           autocomplete="off"
         />
       </div>
@@ -175,8 +208,18 @@ function removeCustom(type, item) {
       :type="t"
       :items="groups[t]"
       @remove="removeCustom(t, $event)"
+      @edit="startEdit(t, $event)"
     />
   </div>
 
   <Export :groups="groups" class="mt-4" />
+
+  <EditCustomModal
+    :custom="editing?.item ?? null"
+    :type="editing?.type ?? null"
+    :groups="groups"
+    :types="TYPES"
+    @save="applyEdit"
+    @close="editing = null"
+  />
 </template>

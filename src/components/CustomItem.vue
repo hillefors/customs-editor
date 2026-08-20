@@ -1,7 +1,7 @@
 <script setup>
-import { computed, ref } from 'vue'
-import { tagWidth, tagKey, taggedName, taggedLength, NAME_LIMIT } from '../utils/tags.js'
-import { copyText } from '../utils/clipboard.js'
+import { computed } from 'vue'
+import { tagWidth, tagKey, taggedLength, NAME_LIMIT } from '../utils/tags.js'
+import target from '../assets/target.png'
 
 const props = defineProps({
   custom: { type: Object, required: true },
@@ -9,10 +9,7 @@ const props = defineProps({
   count: { type: Number, required: true },
 })
 
-const emit = defineEmits(['remove'])
-
-// Human-readable label for the invisible tag, padded to the box's width.
-const orderKey = computed(() => tagKey(props.index, tagWidth(props.count)))
+const emit = defineEmits(['remove', 'edit'])
 
 // A name added while the box was smaller can overflow once the tag widens.
 const overflow = computed(
@@ -36,7 +33,9 @@ const overflow = computed(
       </svg>
     </button>
 
-    <span class="custom__order" :title="`Order tag: ${orderKey}`">{{ orderKey }}</span>
+    <img class="custom__image" :src="target" />
+
+    <!-- <span class="custom__order" :title="`Order tag: ${orderKey}`">{{ orderKey }}</span> -->
 
     <div class="custom__body">
       <div class="custom__name">{{ custom.name }}</div>
@@ -47,6 +46,21 @@ const overflow = computed(
     </div>
 
     <div class="custom__actions">
+      <button
+        type="button"
+        class="btn btn--quiet custom__edit"
+        aria-label="Edit custom"
+        title="Edit"
+        @click="emit('edit', custom)"
+      >
+        <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="M11.5 1.5a1.4 1.4 0 0 1 2 2L5 12l-3 1 1-3 8.5-8.5Z"
+            fill="none" stroke="currentColor" stroke-width="1.4"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
       <button
         type="button"
         class="btn btn--quiet custom__remove"

@@ -77,3 +77,28 @@ export function buildShareUrl(encoded) {
   const { origin, pathname } = window.location
   return encoded ? `${origin}${pathname}?${PARAM}=${encoded}` : `${origin}${pathname}`
 }
+
+// --- Local persistence ----------------------------------------------------
+// The shareable link is for handing work to another browser/person; for the
+// user's OWN "come back later", we autosave to localStorage. That keeps the
+// day-to-day workflow working without ever depending on a (potentially huge)
+// URL — the link stays a deliberate export, the local save is automatic.
+const STORAGE_KEY = 'customs-editor:v1'
+
+// Persist the current groups locally (reuses the same compact encoding).
+export function saveLocal(groups) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, isEmpty(groups) ? '' : encodeState(groups))
+  } catch {
+    // Storage can be unavailable (private mode, quota) — fail silently.
+  }
+}
+
+// Restore groups from localStorage, or null if nothing valid is stored.
+export function loadLocal() {
+  try {
+    return decodeState(window.localStorage.getItem(STORAGE_KEY))
+  } catch {
+    return null
+  }
+}
